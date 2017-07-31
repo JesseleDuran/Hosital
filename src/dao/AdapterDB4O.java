@@ -53,10 +53,18 @@ public abstract class AdapterDB4O<T>
     public T queryOne(DB4OConnection db4, T record) {
         db4.open();
         ObjectSet result = db4.find(record);
-        T found = (T) result.next();
-        //listResult(result); 
-        db4.close();
-        return found;
+        if(result.hasNext())
+        {
+            T found = (T) result.next();
+            db4.close();
+            return found;
+        }
+        else
+        {
+            db4.close();
+            return null;
+        }
+
     }
 
     /*public static void listResult(List<?> result){

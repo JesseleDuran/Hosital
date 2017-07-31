@@ -301,10 +301,10 @@ public class Control implements ActionListener {
                 && !this.ventana_login.passwordField.getText().trim().equals("")) {
 
             Empleado empleado = new Empleado(null, this.ventana_login.ciField.getText(), this.ventana_login.passwordField.getText());
-            //Medico medico = new Medico(this.ventana_login.ciField.getText(),null,null,null,this.ventana_login.passwordField.getText());
+            Medico medico = new Medico(this.ventana_login.ciField.getText(),null,null,null,this.ventana_login.passwordField.getText(), false);
 
             Empleado empLoggeado = EmpleadoDAO.getInstance().queryOne(db, empleado);
-            //Medico medicLoggeado = MedicoDAO.getInstance().queryOne(db, medico);
+            Medico medicLoggeado = MedicoDAO.getInstance().queryOne(db, medico);
 
             if (empLoggeado != null) {
                 System.out.println("soy empleado");
@@ -324,12 +324,12 @@ public class Control implements ActionListener {
                 addRegistrar();
                 addVer();
 
-            } /*else if(medicLoggeado != null)
+            } else if(medicLoggeado != null)
             {
                 System.out.println("soy doctor");
-                ventana_login.dispose();
-                Control control1 = new Control(3, db);
-            }*/ else {
+                /*ventana_login.dispose();
+                Control control1 = new Control(3, db, "");*/
+            }else {
                 System.out.println("soy nadie");
                 JOptionPane.showMessageDialog(null, "El nombre de usuario y contraseña no coinciden, por favor vuelva a intentarlo",
                         "Error al Iniciar Sesión",
