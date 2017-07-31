@@ -15,8 +15,6 @@ import java.util.List;
 import java.lang.Class;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
