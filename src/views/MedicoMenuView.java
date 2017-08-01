@@ -5,6 +5,8 @@
  */
 package views;
 
+import models.Medico;
+
 /**
  *
  * @author Jessele Durán
@@ -14,10 +16,11 @@ public class MedicoMenuView extends javax.swing.JFrame {
     /**
      * Creates new form MenuView
      */
-    public MedicoMenuView(String nombre) throws Exception {
+    public MedicoMenuView(Medico medico) throws Exception {
         super("Menú Principal de Médico");
         initComponents();
-        this.nombre = nombre;
+        this.nombre = medico.getNombre();
+        this.medico = medico;
         initButtons();
 
     }
@@ -32,9 +35,9 @@ public class MedicoMenuView extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        citasTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        registrarCitaPreviaButton = new javax.swing.JButton();
+        verUsuarioButton = new javax.swing.JButton();
         nombreLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         registrarMenu = new javax.swing.JMenu();
@@ -47,8 +50,8 @@ public class MedicoMenuView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        citasTable.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        citasTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -59,22 +62,22 @@ public class MedicoMenuView extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        citasTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTable1MouseClicked(evt);
+                citasTableMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(citasTable);
 
         jLabel3.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
         jLabel3.setText("Mis Citas");
 
-        registrarCitaPreviaButton.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        registrarCitaPreviaButton.setText("Realizar Cita Previa");
-        registrarCitaPreviaButton.setActionCommand("CitaPrevia");
-        registrarCitaPreviaButton.addActionListener(new java.awt.event.ActionListener() {
+        verUsuarioButton.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        verUsuarioButton.setText("Ver Paciente");
+        verUsuarioButton.setActionCommand("CitaPrevia");
+        verUsuarioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                registrarCitaPreviaButtonActionPerformed(evt);
+                verUsuarioButtonActionPerformed(evt);
             }
         });
 
@@ -153,7 +156,7 @@ public class MedicoMenuView extends javax.swing.JFrame {
                 .addGap(12, 12, 12))
             .addGroup(layout.createSequentialGroup()
                 .addGap(264, 264, 264)
-                .addComponent(registrarCitaPreviaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(verUsuarioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -167,16 +170,22 @@ public class MedicoMenuView extends javax.swing.JFrame {
                 .addGap(8, 8, 8)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(registrarCitaPreviaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(verUsuarioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    private void citasTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_citasTableMouseClicked
+        if (evt.getClickCount() == 2) {
 
-    }//GEN-LAST:event_jTable1MouseClicked
+            int fila = citasTable.getSelectedRow();
+            ci = (String) citasTable.getValueAt(fila, 2);
+            System.out.println(ci);
+
+        }
+    }//GEN-LAST:event_citasTableMouseClicked
 
     private void cerrrarSesionMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrrarSesionMenuActionPerformed
         System.exit(0);
@@ -186,9 +195,9 @@ public class MedicoMenuView extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_cerrrarSesionMenuMouseClicked
 
-    private void registrarCitaPreviaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarCitaPreviaButtonActionPerformed
+    private void verUsuarioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verUsuarioButtonActionPerformed
 
-    }//GEN-LAST:event_registrarCitaPreviaButtonActionPerformed
+    }//GEN-LAST:event_verUsuarioButtonActionPerformed
 
     private void cantidadInscriosReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadInscriosReporteActionPerformed
 
@@ -216,22 +225,23 @@ public class MedicoMenuView extends javax.swing.JFrame {
     private javax.swing.JMenuItem aulasReporte;
     private javax.swing.JMenuItem cantidadInscriosReporte;
     private javax.swing.JMenu cerrrarSesionMenu;
+    public javax.swing.JTable citasTable;
     private javax.swing.JMenuItem instructoresReporte;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel nombreLabel;
-    public javax.swing.JButton registrarCitaPreviaButton;
     public javax.swing.JMenu registrarMenu;
     private javax.swing.JMenu reportesMenu;
     public javax.swing.JMenu verMenu;
+    public javax.swing.JButton verUsuarioButton;
     // End of variables declaration//GEN-END:variables
     public String nombre;
+    public Medico medico;
+    public String ci;
     private void initButtons()
     {
         nombreLabel.setText("Bienvenida, " + nombre);
     }
-
 
 }

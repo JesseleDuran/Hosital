@@ -32,13 +32,16 @@ import models.Empleado;
 import models.Medico;
 import models.Paciente;
 import views.CitasRegisterView;
+import views.ConsultaRegisterView;
 
 import views.LoginView;
 import views.EmpleadoMenuView;
 import views.EmpleadoRegisterView;
 import views.MedicoEspRegisterView;
+import views.MedicoMenuView;
 import views.MedicoRegisterView;
 import views.PacienteRegisterView;
+import views.PacienteVerView;
 import views.TestTableSortFilter;
 
 /**
@@ -53,12 +56,15 @@ public class Control implements ActionListener {
     MedicoRegisterView registerMedicoView = new MedicoRegisterView();
     MedicoEspRegisterView registerMedicoEspView = new MedicoEspRegisterView();
     PacienteRegisterView registerPacienteView = new PacienteRegisterView();
+    MedicoMenuView ventana_principal_medico;
     CitasRegisterView citasRegisterView;
     EmpleadoMenuView ventana_principal_empleado;
     EmpleadoDAO empleadoDao = EmpleadoDAO.getInstance();
     PacienteDAO pacienteDao = PacienteDAO.getInstance();
     MedicoDAO medicoDao = MedicoDAO.getInstance();
     CitaPreviaDAO citaDao = CitaPreviaDAO.getInstance();
+    PacienteVerView pacienteVerView;
+    ConsultaRegisterView consultaRegisterView;
 
     public Control(Integer Ventana, DB4OConnection db, String nombre) {
         this.db = db;
@@ -81,10 +87,24 @@ public class Control implements ActionListener {
             case 4:
                 this.citasRegisterView = new CitasRegisterView(db);
                 String nombreColumnas[] = {"Nombre", "Apellido", "Teléfono", "Cédula"};
-                DefaultTableModel model = new DefaultTableModel(null, nombreColumnas);
+                DefaultTableModel model = new DefaultTableModel(null, nombreColumnas) {
+                    //para que las filas no sean editables
+                    @Override
+                    public boolean isCellEditable(int fila, int columna) {
+                        return false;
+                    }
+
+                };
                 pacienteDao.mostrarTodos(db, model, this.citasRegisterView.jTablePaciente);
                 String nombreColumnas2[] = {"Nombre", "Apellido", "Especialidad", "Licencia médica"};
-                DefaultTableModel model2 = new DefaultTableModel(null, nombreColumnas2);
+                DefaultTableModel model2 = new DefaultTableModel(null, nombreColumnas2) {
+                    //para que las filas no sean editables
+                    @Override
+                    public boolean isCellEditable(int fila, int columna) {
+                        return false;
+                    }
+
+                };
                 medicoDao.mostrarTodos(db, model2, this.citasRegisterView.jTableMedicos);
                 this.citasRegisterView.setVisible(true);
                 this.citasRegisterView.CancelarCita.addActionListener(this);
@@ -100,8 +120,31 @@ public class Control implements ActionListener {
                 this.registerMedicoEspView.cancelarButtonEsp.addActionListener(this);
                 this.registerMedicoEspView.registrarButtonEsp.addActionListener(this);
                 break;
+            
+                
+            case 8:    
+                Paciente pac = new Paciente(null,null,null,nombre);
+                Paciente found = pacienteDao.queryOne(db, pac);
+                System.out.println(found);
+                this.pacienteVerView = new PacienteVerView(found);
+                this.pacienteVerView.setVisible(true);
+                this.pacienteVerView.registrarConsulta.addActionListener(this);
+                this.registerPacienteView.cancelarButton.addActionListener(this);
         }
     }
+    
+    public Control(Integer Ventana, DB4OConnection db, String id_medico, String id) {
+        this.db = db;
+        switch (Ventana) {
+            case 7:
+                this.consultaRegisterView = new ConsultaRegisterView(id_medico, id);
+                this.consultaRegisterView.setVisible(true);
+                this.consultaRegisterView.cancelarButton.addActionListener(this);
+                this.consultaRegisterView.registrarButton.addActionListener(this);
+                break;
+        }
+    }
+    
 
     public void actionPerformed(ActionEvent e) {
         System.out.println(e.getActionCommand());
@@ -130,6 +173,9 @@ public class Control implements ActionListener {
             case "CancelarPaciente":
                 this.registerPacienteView.dispose();
                 break;
+            case "RegistrarCita":
+                registrarCitaButtonActionPerformed(e);
+                break;
             case "CancelarCita":
                 this.citasRegisterView.dispose();
                 break;
@@ -138,7 +184,13 @@ public class Control implements ActionListener {
                 break;
             case "CancelarMedicoEsp":
                 this.registerMedicoEspView.dispose();
+                break; 
+            case "RegistrarCosulta":
+                Control control = new Control(7,db,this.ventana_principal_medico.medico.getLicencia(),this.ventana_principal_medico.ci);
                 break;
+            case "registrarConsultas":
+                //registrarConsultasButtonActionPerformed(e);
+                
         }
     }
 
@@ -165,9 +217,12 @@ public class Control implements ActionListener {
                     this.citasRegisterView.ci);
 
             List<CitaPrevia> citaExistente = citaDao.queryByAllProperties(db, citaComparison);
+            System.out.println(citaExistente);
 
             if (citaExistente.isEmpty()) {
                 if (citaDao.insert(db, cita) == true) {
+                    System.out.println(cita);
+
                     this.citasRegisterView.dispose();
                     JOptionPane.showMessageDialog(null, "La cita se ha registrado correctamente", "Registro con éxito", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -325,11 +380,34 @@ public class Control implements ActionListener {
                 addVer();
 
             } else if(medicLoggeado != null)
-            {
-                System.out.println("soy doctor");
-                /*ventana_login.dispose();
-                Control control1 = new Control(3, db, "");*/
-            }else {
+            {     
+                try {
+                    System.out.println("soy doctor especial");
+                    ventana_login.dispose();
+                    String nombreColumnas2[] = {"Fecha", "Hora", "Cédula del paciente"};
+                    DefaultTableModel model2 = new DefaultTableModel(null, nombreColumnas2) {
+                        //para que las filas no sean editables
+                        @Override
+                        public boolean isCellEditable(int fila, int columna) {
+                            return false;
+                        }
+
+                    };
+                    
+                    this.ventana_principal_medico = new MedicoMenuView(medicLoggeado);
+                    citaDao.mostrarTodos(db, model2, this.ventana_principal_medico.citasTable, medicLoggeado.getLicencia());
+                    this.ventana_principal_medico.verUsuarioButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            Control control1 = new Control(8, db, ventana_principal_medico.ci);
+                        }
+                    });
+
+                } catch (Exception ex) {
+                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                this.ventana_principal_medico.setVisible(true);
+
+            } else {
                 System.out.println("soy nadie");
                 JOptionPane.showMessageDialog(null, "El nombre de usuario y contraseña no coinciden, por favor vuelva a intentarlo",
                         "Error al Iniciar Sesión",

@@ -54,7 +54,6 @@ public class PacienteDAO extends AdapterDB4O<Paciente>
         tabla.setModel(model);
         tabla.updateUI();
         db4o.close();
-
     }
     
     public Object[][] dataMatrix(DB4OConnection db4o) {
