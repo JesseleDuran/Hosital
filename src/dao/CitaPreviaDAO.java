@@ -7,6 +7,8 @@ package dao;
 
 import com.db4o.ObjectSet;
 import connections.DB4OConnection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import models.CitaPrevia;
@@ -31,32 +33,35 @@ public class CitaPreviaDAO extends AdapterDB4O<CitaPrevia> {
         return instance;
     }
 
-    public void mostrarTodos(DB4OConnection db4o, DefaultTableModel model, JTable tabla, String licencia) {
+    public List<CitaPrevia> mostrarTodos(DB4OConnection db4o, DefaultTableModel model, JTable tabla, String licencia) 
+    {
         db4o.open();
 
-        CitaPrevia cita = new CitaPrevia(null, null, null, null);
-        ObjectSet result = db4o.find(cita);
-        System.out.println(result);
-        Object[] data = new Object[3];
-
-        while (result.hasNext()) {
-
-            cita = (CitaPrevia) result.next();
-            for (int i = 0; i < 3; i++) {
-                data[0] = cita.getFecha();
-                data[1] = cita.getHora();
-                data[2] = cita.getId_paciente();
-            }
-            model.addRow(data);
-        }
         
-        data[0]="";
-        data[1]="";
-        data[2]="345";
-        model.addRow(data);
+        List<CitaPrevia> result = CitaPreviaDAO.getInstance().getAll(db4o);
+        System.out.println(result);
+        
+        List<CitaPrevia> citas = new ArrayList<>();
+        for (CitaPrevia cita : result) {
+            if(cita.getId_medico().equals(licencia))
+            {
+                            Object[] data = new Object[3];
+            data[0] = cita.getFecha();
+            data[1] = cita.getHora();
+            data[2] = cita.getId_paciente();
+            citas.add(cita);
+            model.addRow(data);
+            }
+            
+        }
+
+
+        
+;
         tabla.setModel(model);
         tabla.updateUI();
         db4o.close();
+        return citas;
     }
 
 }

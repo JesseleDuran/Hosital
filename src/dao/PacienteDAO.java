@@ -67,12 +67,12 @@ public class PacienteDAO extends AdapterDB4O<Paciente>
         while (result.hasNext()) {
             
             paciente = (Paciente) result.next();
-            for (int i = 0; i < 4; i++) {
-                data[j][0] = paciente.getNombre();
-                data[j][1] = paciente.getApellido();
-                data[j][2] = paciente.getTelefono();
-                data[j][3] = paciente.getCi();
-            }
+          
+            data[j][0] = paciente.getNombre();
+            data[j][1] = paciente.getApellido();
+            data[j][2] = paciente.getTelefono();
+            data[j][3] = paciente.getCi();
+           
             j++;
         }
 

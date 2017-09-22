@@ -21,7 +21,9 @@ public class Hospital {
     public static void main(String[] args) {
         // TODO code application logic here
         DB4OConnection db = new DB4OConnection("BD.hospital");
-        Control controlador = new Control(1, db, "");
+        Control controlador = Control.getInstance();
+        controlador.setDatabase(db);
+        controlador.abrirVentana(1, "");
         
     }     
     

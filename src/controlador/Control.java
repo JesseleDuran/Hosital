@@ -49,7 +49,11 @@ import views.TestTableSortFilter;
  * @author Mota
  */
 public class Control implements ActionListener {
-
+    
+    private static Control instance;
+    
+    
+    
     DB4OConnection db;
     LoginView ventana_login = new LoginView();
     EmpleadoRegisterView registerEmpleadoView = new EmpleadoRegisterView();
@@ -65,14 +69,31 @@ public class Control implements ActionListener {
     CitaPreviaDAO citaDao = CitaPreviaDAO.getInstance();
     PacienteVerView pacienteVerView;
     ConsultaRegisterView consultaRegisterView;
-
-    public Control(Integer Ventana, DB4OConnection db, String nombre) {
+    
+    private Control()
+    {
+        this.ventana_login.cancelarButton.addActionListener(this);
+        this.ventana_login.ingresarButton.addActionListener(this);
+    }
+    
+    public static Control getInstance()
+    {
+        if (instance == null)
+            instance = new Control();
+        return instance;
+    }
+    
+    public void setDatabase(DB4OConnection db)
+    {
         this.db = db;
+    }
+    
+    
+    public void abrirVentana(Integer Ventana, String nombre) {
         switch (Ventana) {
             case 1:
                 this.ventana_login.setVisible(true);
-                this.ventana_login.cancelarButton.addActionListener(this);
-                this.ventana_login.ingresarButton.addActionListener(this);
+                
                 break;
             case 2:
                 this.registerMedicoView.setVisible(true);
@@ -133,8 +154,7 @@ public class Control implements ActionListener {
         }
     }
     
-    public Control(Integer Ventana, DB4OConnection db, String id_medico, String id) {
-        this.db = db;
+    public void abrirVentana(Integer Ventana, String id_medico, String id) {
         switch (Ventana) {
             case 7:
                 this.consultaRegisterView = new ConsultaRegisterView(id_medico, id);
@@ -186,7 +206,7 @@ public class Control implements ActionListener {
                 this.registerMedicoEspView.dispose();
                 break; 
             case "RegistrarCosulta":
-                Control control = new Control(7,db,this.ventana_principal_medico.medico.getLicencia(),this.ventana_principal_medico.ci);
+                abrirVentana(7,this.ventana_principal_medico.medico.getLicencia(),this.ventana_principal_medico.ci);
                 break;
             case "registrarConsultas":
                 //registrarConsultasButtonActionPerformed(e);
@@ -368,7 +388,7 @@ public class Control implements ActionListener {
                     this.ventana_principal_empleado = new EmpleadoMenuView(empLoggeado.getNombre());
                     this.ventana_principal_empleado.registrarCitaPreviaButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            Control control1 = new Control(4, db, "");
+                            abrirVentana(4,"");
                         }
                     });
 
@@ -395,10 +415,15 @@ public class Control implements ActionListener {
                     };
                     
                     this.ventana_principal_medico = new MedicoMenuView(medicLoggeado);
-                    citaDao.mostrarTodos(db, model2, this.ventana_principal_medico.citasTable, medicLoggeado.getLicencia());
+                    List<CitaPrevia> citas = citaDao.mostrarTodos(db, model2, this.ventana_principal_medico.citasTable, medicLoggeado.getLicencia());
                     this.ventana_principal_medico.verUsuarioButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            Control control1 = new Control(8, db, ventana_principal_medico.ci);
+                            if(ventana_principal_medico.citasTable.getSelectedRow() >= 0)
+                            {
+                                CitaPrevia c = citas.get(ventana_principal_medico.citasTable.getSelectedRow());
+                            abrirVentana(8, c.getId_paciente());
+                            }
+                            
                         }
                     });
 
@@ -429,7 +454,7 @@ public class Control implements ActionListener {
         JMenuItem medico = new JMenuItem("Médico General");
         medico.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Control control1 = new Control(2, db, "");
+                abrirVentana(2, "");
             }
         });
         this.ventana_principal_empleado.registrarMenu.add(medico);
@@ -437,7 +462,7 @@ public class Control implements ActionListener {
         JMenuItem medico1 = new JMenuItem("Médico Especialista");
         medico1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Control control1 = new Control(6, db, "");
+                abrirVentana(6,"");
             }
         });
         this.ventana_principal_empleado.registrarMenu.add(medico1);
@@ -445,7 +470,7 @@ public class Control implements ActionListener {
         JMenuItem empleado = new JMenuItem("Empleado");
         empleado.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Control control1 = new Control(3, db, "");
+                abrirVentana(3,"");
             }
         });
         this.ventana_principal_empleado.registrarMenu.add(empleado);
@@ -453,7 +478,7 @@ public class Control implements ActionListener {
         JMenuItem paciente = new JMenuItem("Paciente");
         paciente.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Control control1 = new Control(5, db, "");
+                abrirVentana(5,"");
             }
         });
         this.ventana_principal_empleado.registrarMenu.add(paciente);
@@ -466,11 +491,25 @@ public class Control implements ActionListener {
                 String nombreColumnas[] = {"Nombre", "Apellido", "Especialidad", "Cédula"};
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        JFrame frame = new JFrame("Ver Médicos");
-                        frame.add(new TestTableSortFilter(nombreColumnas,medicoDao.dataMatrix(db)));
-                        frame.pack();
-                        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                        frame.setLocationRelativeTo(null);
+                        JFrame frame = new TestTableSortFilter(nombreColumnas,
+                                medicoDao.dataMatrix(db), new TestTableSortFilter.TableActions() {
+
+                            @Override
+                            public void onEdit(int selected) {
+                                // TODO Edit
+                            }
+
+                            @Override
+                            public boolean onDelete(int selected) {
+                                db.open();
+                                Medico m = medicoDao.getAll(db).get(selected);
+                                db.close();
+                                if (selected >= 0)   // TODO add Confirmacion 
+                                    medicoDao.delete(db, m);
+                                
+                                return true;
+                            }
+                        });
                         frame.setVisible(true);
                     }
 
@@ -485,11 +524,24 @@ public class Control implements ActionListener {
                 String nombreColumnas[] = {"Nombre", "Cédula"};
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        JFrame frame = new JFrame("Ver empleados");
-                        frame.add(new TestTableSortFilter(nombreColumnas, empleadoDao.dataMatrix(db)));
-                        frame.pack();
-                        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                        frame.setLocationRelativeTo(null);
+                        JFrame frame = new TestTableSortFilter(nombreColumnas, empleadoDao.dataMatrix(db), new TestTableSortFilter.TableActions() {
+
+                            @Override
+                            public void onEdit(int selected) {
+                                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                            }
+
+                            @Override
+                            public boolean onDelete(int selected) {
+                               db.open();
+                               Empleado d = empleadoDao.getAll(db).get(selected);
+                               db.close();
+                               if(selected >= 0)
+                               empleadoDao.delete(db, d);
+                               
+                               return true;
+                            }
+                        } );
                         frame.setVisible(true);
                     }
 
@@ -504,11 +556,24 @@ public class Control implements ActionListener {
                 String nombreColumnas[] = {"Nombre", "Apellido", "Teléfono", "Cédula"};
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        JFrame frame = new JFrame("Ver Pacientes");
-                        frame.add(new TestTableSortFilter(nombreColumnas,pacienteDao.dataMatrix(db)));
-                        frame.pack();
-                        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                        frame.setLocationRelativeTo(null);
+                        JFrame frame = new TestTableSortFilter(nombreColumnas,pacienteDao.dataMatrix(db), new TestTableSortFilter.TableActions() {
+
+                            @Override
+                            public void onEdit(int selected) {
+                                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                            }
+
+                            @Override
+                            public boolean onDelete(int selected) {
+                                db.open();
+                                Paciente p = pacienteDao.getAll(db).get(selected);
+                                db.close();
+                                if(selected >= 0)
+                                    pacienteDao.delete(db, p);
+                                
+                                return true;
+                            }
+                        } );
                         frame.setVisible(true);
                     }
 
@@ -586,7 +651,7 @@ public class Control implements ActionListener {
         return false;
     }
     
-       public boolean validacionesMedicoEsp() {
+    public boolean validacionesMedicoEsp() {
         if (this.registerMedicoEspView.nameField.getText().isEmpty() == true) {
             JOptionPane.showMessageDialog(null, "Error: Debe ingresar un nombre", "ERROR", JOptionPane.ERROR_MESSAGE);
             return true;
