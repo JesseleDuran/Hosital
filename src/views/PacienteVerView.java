@@ -160,7 +160,8 @@ public class PacienteVerView extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     public Paciente paciente;
     private void initButtons()
-    {
+    {   
+        
         nombre.setText(paciente.getNombre());
         apellido.setText(paciente.getApellido());
         tele.setText(paciente.getTelefono());

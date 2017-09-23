@@ -13,9 +13,11 @@ import dao.PacienteDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ import models.CitaPrevia;
 import models.Empleado;
 import models.Medico;
 import models.Paciente;
+import utils.PDFGenerator;
 import views.CitasRegisterView;
 import views.ConsultaRegisterView;
 
@@ -398,6 +401,7 @@ public class Control implements ActionListener {
                 this.ventana_principal_empleado.setVisible(true);
                 addRegistrar();
                 addVer();
+                addReportes();
 
             } else if(medicLoggeado != null)
             {     
@@ -583,6 +587,34 @@ public class Control implements ActionListener {
         });
         this.ventana_principal_empleado.verMenu.add(paciente);
     }
+    
+    private void addReportes()
+    {
+        this.ventana_principal_empleado.citasReporte.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generarReporteCitas();
+            }
+        });
+        
+        this.ventana_principal_empleado.citasMGeneral.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generarReporteMedicosGenerales();
+            }
+        });
+        
+        
+        this.ventana_principal_empleado.citasMEspecialista.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generarReporteMeditosEspecialistas();
+            }
+        });
+    }
 
     public boolean validacionesUser() {
         if (this.registerEmpleadoView.nameField.getText().isEmpty() == true) {
@@ -702,5 +734,71 @@ public class Control implements ActionListener {
         }*/
         return false;
     }
-
+    
+    
+    private void generarReporteCitas()
+    {   
+       db.open();
+       int cantidad = this.citaDao.getAll(db).size();
+       db.close();
+       LinkedHashMap<String, Object> maps = new LinkedHashMap<>();
+       maps.put("Cantidad de Citas", cantidad);
+       List<LinkedHashMap<String, Object>>  list = new ArrayList<>();
+       list.add(maps);
+       PDFGenerator.createPDFFromHashMapList(ventana_principal_empleado, 
+                                            list, "Cantidad de Citas Totales");
+    }
+    
+    private void generarReporteMedicosGenerales()
+    {
+       db.open();
+       List<Medico> medicos = this.medicoDao.getAll(db);
+       List<LinkedHashMap<String, Object>>  list = new ArrayList<>();
+       
+ 
+        for (Medico m : medicos) 
+        {
+            if (!m.isEspecialista()) 
+            {
+               LinkedHashMap<String, Object> maps = new LinkedHashMap<>();
+               maps.put("Nombre Medico", m.getNombre()+" "+m.getApellido());
+               maps.put("Licencia", m.getLicencia());
+               maps.put("Cantidad de Citas", cantidadCitasMedico(m));
+               list.add(maps);
+            }
+        }
+        db.close();
+       
+       PDFGenerator.createPDFFromHashMapList(ventana_principal_empleado, 
+                                            list, "Cantidad de Citas Por Medico General"); 
+    }
+    
+    private void generarReporteMeditosEspecialistas()
+    {
+       db.open();
+       List<Medico> medicos = this.medicoDao.getAll(db);
+       List<LinkedHashMap<String, Object>>  list = new ArrayList<>();
+       
+ 
+        for (Medico m : medicos) 
+        {
+            if (m.isEspecialista()) 
+            {
+               LinkedHashMap<String, Object> maps = new LinkedHashMap<>();
+               maps.put("Nombre Medico", m.getNombre()+" "+m.getApellido());
+               maps.put("Licencia", m.getLicencia());
+               maps.put("Cantidad de Citas", cantidadCitasMedico(m));
+               list.add(maps);
+            }
+        }
+       db.close();
+       
+       PDFGenerator.createPDFFromHashMapList(ventana_principal_empleado, 
+                                            list, "Cantidad de Citas Por Medico Especialista");
+    }
+    
+    private int cantidadCitasMedico(Medico m)
+    {
+      return citaDao.queryByProperty(db, "id_medico", m.getLicencia()).size();
+    }
 }

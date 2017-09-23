@@ -40,9 +40,9 @@ public class EmpleadoMenuView extends javax.swing.JFrame {
         registrarMenu = new javax.swing.JMenu();
         verMenu = new javax.swing.JMenu();
         reportesMenu = new javax.swing.JMenu();
-        aulasReporte = new javax.swing.JMenuItem();
-        cantidadInscriosReporte = new javax.swing.JMenuItem();
-        instructoresReporte = new javax.swing.JMenuItem();
+        citasReporte = new javax.swing.JMenuItem();
+        citasMGeneral = new javax.swing.JMenuItem();
+        citasMEspecialista = new javax.swing.JMenuItem();
         cerrrarSesionMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -95,29 +95,29 @@ public class EmpleadoMenuView extends javax.swing.JFrame {
         reportesMenu.setText("Reportes");
         reportesMenu.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
 
-        aulasReporte.setText("Cantidad de Citas");
-        aulasReporte.addActionListener(new java.awt.event.ActionListener() {
+        citasReporte.setText("Cantidad de Citas");
+        citasReporte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aulasReporteActionPerformed(evt);
+                citasReporteActionPerformed(evt);
             }
         });
-        reportesMenu.add(aulasReporte);
+        reportesMenu.add(citasReporte);
 
-        cantidadInscriosReporte.setText("Cantidad de Citas por Médico General");
-        cantidadInscriosReporte.addActionListener(new java.awt.event.ActionListener() {
+        citasMGeneral.setText("Cantidad de Citas por Médico General");
+        citasMGeneral.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cantidadInscriosReporteActionPerformed(evt);
+                citasMGeneralActionPerformed(evt);
             }
         });
-        reportesMenu.add(cantidadInscriosReporte);
+        reportesMenu.add(citasMGeneral);
 
-        instructoresReporte.setText("Cantidad de Citas por Médico Especialista");
-        instructoresReporte.addActionListener(new java.awt.event.ActionListener() {
+        citasMEspecialista.setText("Cantidad de Citas por Médico Especialista");
+        citasMEspecialista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                instructoresReporteActionPerformed(evt);
+                citasMEspecialistaActionPerformed(evt);
             }
         });
-        reportesMenu.add(instructoresReporte);
+        reportesMenu.add(citasMEspecialista);
 
         menuBar.add(reportesMenu);
 
@@ -191,11 +191,11 @@ public class EmpleadoMenuView extends javax.swing.JFrame {
 
     }//GEN-LAST:event_registrarCitaPreviaButtonActionPerformed
 
-    private void cantidadInscriosReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadInscriosReporteActionPerformed
+    private void citasMGeneralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_citasMGeneralActionPerformed
 
-    }//GEN-LAST:event_cantidadInscriosReporteActionPerformed
+    }//GEN-LAST:event_citasMGeneralActionPerformed
 
-    private void instructoresReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructoresReporteActionPerformed
+    private void citasMEspecialistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_citasMEspecialistaActionPerformed
         // TODO add your handling code here:
         /*ReportesController reporte = new ReportesController();
 
@@ -206,18 +206,18 @@ public class EmpleadoMenuView extends javax.swing.JFrame {
         } catch (Exception ex) {
             //TODO Añadir error !
         }*/
-    }//GEN-LAST:event_instructoresReporteActionPerformed
+    }//GEN-LAST:event_citasMEspecialistaActionPerformed
 
-    private void aulasReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aulasReporteActionPerformed
+    private void citasReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_citasReporteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_aulasReporteActionPerformed
+    }//GEN-LAST:event_citasReporteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem aulasReporte;
-    private javax.swing.JMenuItem cantidadInscriosReporte;
     private javax.swing.JMenu cerrrarSesionMenu;
-    private javax.swing.JMenuItem instructoresReporte;
+    public javax.swing.JMenuItem citasMEspecialista;
+    public javax.swing.JMenuItem citasMGeneral;
+    public javax.swing.JMenuItem citasReporte;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
@@ -225,7 +225,7 @@ public class EmpleadoMenuView extends javax.swing.JFrame {
     private javax.swing.JLabel nombreLabel;
     public javax.swing.JButton registrarCitaPreviaButton;
     public javax.swing.JMenu registrarMenu;
-    private javax.swing.JMenu reportesMenu;
+    public javax.swing.JMenu reportesMenu;
     public javax.swing.JMenu verMenu;
     // End of variables declaration//GEN-END:variables
     public String nombre;
