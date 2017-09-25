@@ -7,6 +7,7 @@ package views;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import models.Paciente;
 
 
 /**
@@ -211,5 +212,12 @@ public class PacienteRegisterView extends javax.swing.JFrame {
         ciField.addKeyListener(eventosDeTecla);
         telefonoField.addKeyListener(eventosDeTecla);
     }
-
+    
+    public void setPaciente(Paciente p)
+    {
+        this.apellidoField.setText(p.getApellido());
+        this.ciField.setText(p.getCi());
+        this.nameField.setText(p.getNombre());
+        this.telefonoField.setText(p.getTelefono());
+    }
 }

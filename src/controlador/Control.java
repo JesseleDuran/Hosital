@@ -500,7 +500,11 @@ public class Control implements ActionListener {
 
                             @Override
                             public void onEdit(int selected) {
-                                // TODO Edit
+                                db.open();
+                                Medico m = medicoDao.getAll(db).get(selected);
+                                db.close();
+                                if (selected >= 0)   // TODO add Confirmacion
+                                    editMedico(m);
                             }
 
                             @Override
@@ -532,7 +536,11 @@ public class Control implements ActionListener {
 
                             @Override
                             public void onEdit(int selected) {
-                                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                               db.open();
+                               Empleado d = empleadoDao.getAll(db).get(selected);
+                               db.close();
+                               if(selected >= 0)
+                                   editEmpleado(d);
                             }
 
                             @Override
@@ -564,7 +572,12 @@ public class Control implements ActionListener {
 
                             @Override
                             public void onEdit(int selected) {
-                                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                               db.open();
+                                Paciente p = pacienteDao.getAll(db).get(selected);
+                                db.close();
+                                if(selected >= 0)
+                                    editPaciente(p);
+                                
                             }
 
                             @Override
@@ -800,5 +813,64 @@ public class Control implements ActionListener {
     private int cantidadCitasMedico(Medico m)
     {
       return citaDao.queryByProperty(db, "id_medico", m.getLicencia()).size();
+    }
+    
+    private void editEmpleado(Empleado p)
+    {
+        EmpleadoRegisterView view = new EmpleadoRegisterView();
+        view.setEmpleado(p);
+        view.registrarButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+            }
+        });
+        view.setVisible(true);
+    }
+    
+    private void editMedico(Medico p)
+    {
+        if(p.isEspecialista())
+        {
+            MedicoEspRegisterView view = new MedicoEspRegisterView();
+                    view.setMedico(p);
+            view.registrarButtonEsp.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+            }
+        });
+        view.setVisible(true);
+        }    
+        else
+        {
+            MedicoRegisterView view = new MedicoRegisterView();
+            view.setMedico(p);
+            view.registrarButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+            }
+        });
+        view.setVisible(true);
+        }
+            
+
+    }
+    private void editPaciente(Paciente p)
+    {
+        PacienteRegisterView view = new PacienteRegisterView();
+        view.setPaciente(p);
+        view.registrarButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+             //TODO 
+            }
+        });
+        view.setVisible(true);
     }
 }

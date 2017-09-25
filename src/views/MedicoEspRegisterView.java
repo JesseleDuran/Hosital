@@ -9,6 +9,7 @@ import connections.DB4OConnection;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
+import models.Medico;
 
 
 /**
@@ -245,5 +246,15 @@ public class MedicoEspRegisterView extends javax.swing.JFrame {
         especialidadField.addKeyListener(eventosDeTeclaOnlyLetters);
         
     }
-
+    
+    
+    public void setMedico(Medico m)
+    {
+        this.apellidoField.setText(m.getApellido());
+        this.licenciaField.setText(m.getLicencia());
+        this.nameField.setText(m.getNombre());
+        this.passwordField.setText(m.getPassword());
+        this.especialidadField.setText(m.getEspecialidad());
+      
+    }
 }

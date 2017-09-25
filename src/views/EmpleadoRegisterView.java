@@ -9,6 +9,7 @@ import connections.DB4OConnection;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
+import models.Empleado;
 
 
 /**
@@ -201,5 +202,12 @@ public class EmpleadoRegisterView extends javax.swing.JFrame {
         ciField.addKeyListener(eventosDeTecla);
         nameField.addKeyListener(eventosDeTeclaOnlyLetters);
     }
-
+    
+    
+    public void setEmpleado(Empleado d)
+    {
+        this.ciField.setText(d.getCedula());
+        this.nameField.setText(d.getNombre());
+        this.passwordField.setText(d.getPassword());
+    }
 }
